@@ -40,3 +40,36 @@
 .read-the-docs {
   color: #888;
 }
+
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.toolbar-section {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.crypto-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0.4rem;
+  border-bottom: 1px solid #eee;
+}
+
+.crypto-left {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.crypto-right {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+

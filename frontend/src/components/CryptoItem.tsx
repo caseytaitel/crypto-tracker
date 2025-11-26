@@ -1,36 +1,29 @@
-import type { CryptoItem } from "../types/crypto";
+import type { Crypto } from "../types/crypto";
+import { getBadgeColor } from "../utils/getBadgeColor";
+import { Badge } from "./ui/Badge";
 
 interface Props {
-  coin: CryptoItem;
+  coin: Crypto;
 }
 
 export default function CryptoItem({ coin }: Props) {
   
   const change = coin.changePct24h;
-  const badgeColor =
-  change > 0 ? "green" :
-  change < 0 ? "red" :
-  "gray";
+  const badgeColor = getBadgeColor(change);
 
   return (
-    <div style={{ padding: "1rem", borderBottom: "1px solid #ccc" }}>
-      <strong>
-        {coin.name} ({coin.symbol})
-      </strong>
-      <div>Price: ${coin.price}</div>
-      <div
-        style={{
-          backgroundColor: badgeColor,
-          color: "white",
-          padding: "2px 6px",
-          borderRadius: "4px",
-          fontSize: "0.8rem",
-        }}
-      >
-        {change > 0 ? "+" : ""}
-        {change}%
+    <div className="crypto-item">
+      <div className="crypto-left">
+        <strong>{coin.name}</strong> ({coin.symbol.toUpperCase()})
       </div>
-      <div>Market Cap: {coin.marketCap}</div>
+
+      <div className="crypto-right">
+        <span>${coin.price.toLocaleString()}</span>
+        <Badge color={badgeColor}>
+          {coin.changePct24h > 0 ? "+" : ""}
+          {coin.changePct24h.toFixed(2)}%
+        </Badge>
+      </div>
     </div>
   );
 }

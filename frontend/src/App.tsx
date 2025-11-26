@@ -1,101 +1,61 @@
-import { useEffect, useState } from "react";
-import { getCryptoList } from "./api/cryptoApi";
-import type { CryptoItem } from "./types/crypto";
+import CryptoToolbar from "./components/CryptoToolbar";
 import CryptoList from "./components/CryptoList";
+import { useCryptoData } from "./hooks/useCryptoData";
 import Loader from "./components/Loader";
 import ErrorMessage from "./components/ErrorMessage";
-import CryptoToolbar from "./components/CryptoToolbar";
-import { useDebounce } from "./hooks/useDebounce";
+import "./index.css";
+import "./App.css";
 
 export default function App() {
-  const [data, setData] = useState<CryptoItem[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<"marketCap" | "price" | "changePct24h">("marketCap");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [filterByChange, setFilterByChange] = useState<"all" | "gainers" | "losers">("all");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const debouncedSearch = useDebounce(searchQuery, 300);
-  const [refreshKey, setRefreshKey] = useState<number>(0);
-  const [limit, setLimit] = useState<10 | 25>(25);
+  const {
+    data,
+    isLoading,
+    error,
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        setIsLoading(true);
-        setError(null);
-  
-        const result = await getCryptoList();
-        setData(result);
-      } catch (err: any) {
-        setError(err.message || "Something went wrong");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  
-    loadData();
-  }, [refreshKey]);  
+    sortBy, setSortBy,
+    sortDir, setSortDir,
+    filterBy, setFilterBy,
+    searchQuery, setSearchQuery,
+    limit, setLimit,
 
+    refresh,
+  } = useCryptoData();
+
+  // ---- Handlers (clean, explicit, self-documenting) ----
+  const handleSortBy = (v: "marketCap" | "price" | "changePct24h") => setSortBy(v);
+
+  const handleSortDir = () =>
+    setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+
+  const handleFilter = (v: "all" | "gainers" | "losers") => setFilterBy(v);
+
+  const handleSearch = (v: string) => setSearchQuery(v);
+
+  const handleLimit = (v: 10 | 25) => setLimit(v);
+
+  const handleRefresh = () => refresh();
+
+  // ---- Loading + Error ----
   if (isLoading) return <Loader />;
-  if (error)
-    return (
-      <ErrorMessage
-        message={error}
-        onRetry={() => setRefreshKey((k) => k + 1)}
-      />
-    );  
-  if (!data) return null;
-
-  // --- Sorting ---
-  const sortedData = data
-  ? [...data].sort((a, b) => {
-      let fieldA = a[sortBy];
-      let fieldB = b[sortBy];
-
-      if (sortDir === "asc") return fieldA > fieldB ? 1 : -1;
-      return fieldA < fieldB ? 1 : -1;
-    })
-  : [];
-
-  // --- Filtering ---
-  const filteredData = sortedData.filter((coin) => {
-  if (filterByChange === "gainers") return coin.changePct24h > 0;
-  if (filterByChange === "losers") return coin.changePct24h < 0;
-  return true; // "all"
-  });
-
-  // --- Search ---
-  const finalData = filteredData.filter((coin) => {
-    const q = debouncedSearch.toLowerCase();
-    return (
-      coin.name.toLowerCase().includes(q) ||
-      coin.symbol.toLowerCase().includes(q)
-    );
-  });  
-
-  // --- Top 10 Limit ---
-  const limitedData = finalData.slice(0, limit);
+  if (error) return <ErrorMessage message={error} />;
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Crypto Tracker</h1>
-  
+    <div>
       <CryptoToolbar
         sortBy={sortBy}
         sortDir={sortDir}
-        filterByChange={filterByChange}
+        filterByChange={filterBy}
         searchQuery={searchQuery}
-        onSortByChange={setSortBy}
-        onSortDirChange={setSortDir}
-        onFilterChange={setFilterByChange}
-        onSearchChange={setSearchQuery}
-        onRefresh={() => setRefreshKey((k) => k + 1)}
         limit={limit}
-        onLimitChange={setLimit}
+        onSortByChange={handleSortBy}
+        onSortDirChange={handleSortDir}
+        onFilterChange={handleFilter}
+        onSearchChange={handleSearch}
+        onLimitChange={handleLimit}
+        onRefresh={handleRefresh}
       />
-  
-      <CryptoList items={limitedData} />
+
+      <CryptoList items={data} />
     </div>
-  );  
+  );
 }

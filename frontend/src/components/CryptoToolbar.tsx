@@ -27,65 +27,54 @@ interface Props {
     onLimitChange
   }: Props) {
     return (
-      <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
-        
-        {/* Sort By */}
-        <select
-          value={sortBy}
-          onChange={(e) =>
-            onSortByChange(e.target.value as "marketCap" | "price" | "changePct24h")
-          }
-        >
-          <option value="marketCap">Market Cap</option>
-          <option value="price">Price</option>
-          <option value="changePct24h">% Change (24h)</option>
-        </select>
-  
-        {/* Direction */}
-        <button
-          onClick={() =>
-            onSortDirChange(sortDir === "asc" ? "desc" : "asc")
-          }
-          style={{
-            padding: "4px 8px",
-            cursor: "pointer"
-          }}
-        >
-          {sortDir === "asc" ? "↑" : "↓"}
-        </button>
+    <div className="toolbar">
+    {/* Sorting */}
+    <div className="toolbar-section">
+      <label>Sort By:</label>
+      <select value={sortBy} onChange={(e) => onSortByChange(e.target.value as any)}>
+        <option value="marketCap">Market Cap</option>
+        <option value="price">Price</option>
+        <option value="changePct24h">% Change</option>
+      </select>
 
-        {/* Filter */}
-        <select
-          value={filterByChange}
-          onChange={(e) =>
-            onFilterChange(e.target.value as "all" | "gainers" | "losers")
-          }
-        >
-          <option value="all">All</option>
-          <option value="gainers">Gainers</option>
-          <option value="losers">Losers</option>
-        </select>
-  
-        {/* Search */}
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-        />
+      <button onClick={() => onSortDirChange(sortDir === "asc" ? "desc" : "asc")}>
+        {sortDir === "asc" ? "↑" : "↓"}
+      </button>
+    </div>
 
-        {/* Top 10 Limit */}
-        <select
-          value={limit}
-          onChange={(e) => onLimitChange(parseInt(e.target.value) as 10 | 25)}
-        >
-          <option value={25}>Top 25</option>
-          <option value={10}>Top 10</option>
-        </select>
+    {/* Filter */}
+    <div className="toolbar-section">
+      <label>Filter:</label>
+      <select value={filterByChange} onChange={(e) => onFilterChange(e.target.value as any)}>
+        <option value="all">All</option>
+        <option value="gainers">Gainers</option>
+        <option value="losers">Losers</option>
+      </select>
+    </div>
 
-  
-        {/* Refresh */}
-        <button onClick={onRefresh}>Refresh</button>
-      </div>
-    );
-  }  
+    {/* Limit */}
+    <div className="toolbar-section">
+      <label>Show:</label>
+      <select value={limit} onChange={(e) => onLimitChange(parseInt(e.target.value) as 10 | 25)}>
+        <option value={25}>Top 25</option>
+        <option value={10}>Top 10</option>
+      </select>
+    </div>
+
+    {/* Search */}
+    <div className="toolbar-section">
+      <input
+        type="text"
+        placeholder="Search..."
+        value={searchQuery}
+        onChange={(e) => onSearchChange(e.target.value)}
+      />
+    </div>
+
+    {/* Refresh */}
+    <div>
+      <button onClick={onRefresh}>Refresh</button>
+    </div>
+  </div>
+  );
+}

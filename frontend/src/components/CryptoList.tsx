@@ -1,5 +1,5 @@
 import CryptoItem from "./CryptoItem";
-import type { CryptoItem as Crypto } from "../types/crypto";
+import type { Crypto } from "../types/crypto";
 
 interface Props {
   items: Crypto[];

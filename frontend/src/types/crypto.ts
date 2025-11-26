@@ -3,7 +3,7 @@ export interface PricePoint {
     price: number;
   }
   
-  export interface CryptoItem {
+  export interface Crypto {
     id: string;
     name: string;
     symbol: string;
