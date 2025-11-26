@@ -5,6 +5,7 @@ import CryptoList from "./components/CryptoList";
 import Loader from "./components/Loader";
 import ErrorMessage from "./components/ErrorMessage";
 import CryptoToolbar from "./components/CryptoToolbar";
+import { useDebounce } from "./hooks/useDebounce";
 
 export default function App() {
   const [data, setData] = useState<CryptoItem[] | null>(null);
@@ -14,7 +15,9 @@ export default function App() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [filterByChange, setFilterByChange] = useState<"all" | "gainers" | "losers">("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const debouncedSearch = useDebounce(searchQuery, 300);
   const [refreshKey, setRefreshKey] = useState<number>(0);
+  const [limit, setLimit] = useState<10 | 25>(25);
 
   useEffect(() => {
     async function loadData() {
@@ -64,12 +67,15 @@ export default function App() {
 
   // --- Search ---
   const finalData = filteredData.filter((coin) => {
-  const q = searchQuery.toLowerCase();
-  return (
-    coin.name.toLowerCase().includes(q) ||
-    coin.symbol.toLowerCase().includes(q)
-  );
-  });
+    const q = debouncedSearch.toLowerCase();
+    return (
+      coin.name.toLowerCase().includes(q) ||
+      coin.symbol.toLowerCase().includes(q)
+    );
+  });  
+
+  // --- Top 10 Limit ---
+  const limitedData = finalData.slice(0, limit);
 
   return (
     <div style={{ padding: "2rem" }}>
@@ -85,9 +91,11 @@ export default function App() {
         onFilterChange={setFilterByChange}
         onSearchChange={setSearchQuery}
         onRefresh={() => setRefreshKey((k) => k + 1)}
+        limit={limit}
+        onLimitChange={setLimit}
       />
   
-      <CryptoList items={finalData} />
+      <CryptoList items={limitedData} />
     </div>
   );  
 }

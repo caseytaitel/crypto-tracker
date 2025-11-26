@@ -3,12 +3,14 @@ interface Props {
     sortDir: "asc" | "desc";
     filterByChange: "all" | "gainers" | "losers";
     searchQuery: string;
+    limit: 10 | 25;
   
     onSortByChange: (value: "marketCap" | "price" | "changePct24h") => void;
     onSortDirChange: (value: "asc" | "desc") => void;
     onFilterChange: (value: "all" | "gainers" | "losers") => void;
     onSearchChange: (value: string) => void;
     onRefresh: () => void;
+    onLimitChange: (value: 10 | 25) => void;
   }
   
   export default function CryptoToolbar({
@@ -16,11 +18,13 @@ interface Props {
     sortDir,
     filterByChange,
     searchQuery,
+    limit,
     onSortByChange,
     onSortDirChange,
     onFilterChange,
     onSearchChange,
-    onRefresh
+    onRefresh,
+    onLimitChange
   }: Props) {
     return (
       <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
@@ -38,16 +42,18 @@ interface Props {
         </select>
   
         {/* Direction */}
-        <select
-          value={sortDir}
-          onChange={(e) =>
-            onSortDirChange(e.target.value as "asc" | "desc")
+        <button
+          onClick={() =>
+            onSortDirChange(sortDir === "asc" ? "desc" : "asc")
           }
+          style={{
+            padding: "4px 8px",
+            cursor: "pointer"
+          }}
         >
-          <option value="asc">Asc</option>
-          <option value="desc">Desc</option>
-        </select>
-  
+          {sortDir === "asc" ? "↑" : "↓"}
+        </button>
+
         {/* Filter */}
         <select
           value={filterByChange}
@@ -67,6 +73,16 @@ interface Props {
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
         />
+
+        {/* Top 10 Limit */}
+        <select
+          value={limit}
+          onChange={(e) => onLimitChange(parseInt(e.target.value) as 10 | 25)}
+        >
+          <option value={25}>Top 25</option>
+          <option value={10}>Top 10</option>
+        </select>
+
   
         {/* Refresh */}
         <button onClick={onRefresh}>Refresh</button>
