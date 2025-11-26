@@ -40,7 +40,7 @@ export default function App() {
   if (error) return <ErrorMessage message={error} />;
 
   return (
-    <div>
+    <div className="app-container">
       <CryptoToolbar
         sortBy={sortBy}
         sortDir={sortDir}

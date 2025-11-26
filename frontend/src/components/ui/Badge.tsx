@@ -1,4 +1,10 @@
-export function Badge({ color, children }: { color: string, children: React.ReactNode }) {
+export function Badge({
+    color,
+    children,
+  }: {
+    color: string;
+    children: React.ReactNode;
+  }) {
     return (
       <span
         style={{
@@ -6,11 +12,15 @@ export function Badge({ color, children }: { color: string, children: React.Reac
           color: "white",
           padding: "2px 6px",
           borderRadius: "4px",
-          fontSize: "0.8rem",
+          fontSize: "0.75rem",
+          fontWeight: 600,
+          display: "inline-block",
+          minWidth: "48px",
+          textAlign: "center",
         }}
       >
         {children}
       </span>
     );
-  }
+  }  
   
